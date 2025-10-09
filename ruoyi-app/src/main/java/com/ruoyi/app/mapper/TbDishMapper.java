@@ -1,0 +1,61 @@
+package com.ruoyi.app.mapper;
+
+import java.util.List;
+import com.ruoyi.app.domain.TbDish;
+
+/**
+ * 菜品管理Mapper接口
+ * 
+ * @author ruoyi
+ * @date 2025-09-30
+ */
+public interface TbDishMapper 
+{
+    /**
+     * 查询菜品管理
+     * 
+     * @param id 菜品管理主键
+     * @return 菜品管理
+     */
+    public TbDish selectTbDishById(Long id);
+
+    /**
+     * 查询菜品管理列表
+     * 
+     * @param tbDish 菜品管理
+     * @return 菜品管理集合
+     */
+    public List<TbDish> selectTbDishList(TbDish tbDish);
+
+    /**
+     * 新增菜品管理
+     * 
+     * @param tbDish 菜品管理
+     * @return 结果
+     */
+    public int insertTbDish(TbDish tbDish);
+
+    /**
+     * 修改菜品管理
+     * 
+     * @param tbDish 菜品管理
+     * @return 结果
+     */
+    public int updateTbDish(TbDish tbDish);
+
+    /**
+     * 删除菜品管理
+     * 
+     * @param id 菜品管理主键
+     * @return 结果
+     */
+    public int deleteTbDishById(Long id);
+
+    /**
+     * 批量删除菜品管理
+     * 
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteTbDishByIds(Long[] ids);
+}

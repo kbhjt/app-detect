@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: process.env.VUE_APP_TITLE,
+      title: '隐私合规性检测平台',
       logo: logoImg
     }
   }

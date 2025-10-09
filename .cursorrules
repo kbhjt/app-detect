@@ -1,0 +1,393 @@
+# RuoYi-Vue Project Cursor Rules
+
+## Project Overview
+This is a RuoYi-Vue v3.9.0 project - a full-stack enterprise management system with Spring Boot backend and Vue.js frontend.
+
+### Tech Stack
+**Backend:**
+- Java 1.8
+- Spring Boot 2.5.15
+- Spring Security 5.7.14
+- MyBatis with XML mappers
+- MySQL with Druid connection pool
+- Redis for caching
+- JWT for authentication
+- Swagger 3.0 for API documentation
+- Quartz for scheduling
+- Velocity for code generation
+
+**Frontend:**
+- Vue 2.6.12
+- Element UI 2.15.14
+- Vue Router 3.4.9
+- Vuex 3.6.0
+- Axios 0.28.1
+- ECharts 5.4.0
+
+## Code Style & Conventions
+
+### Java Backend
+
+#### General Guidelines
+- Use Java 8 features appropriately (streams, lambdas, Optional)
+- Follow RuoYi framework conventions and patterns
+- Maintain consistency with existing codebase architecture
+- Use meaningful variable and method names in camelCase
+- Add JavaDoc comments for public methods and classes
+- Keep methods focused and single-purpose
+
+#### Controller Layer (`com.ruoyi.*.controller`)
+- Use `@RestController` for REST APIs
+- Use `@PreAuthorize` annotations for permission checks (e.g., `@PreAuthorize("@ss.hasPermi('system:user:list')")`)
+- Return `AjaxResult` or `TableDataInfo` for consistent response format
+- Use `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` appropriately
+- Follow RESTful conventions: GET for queries, POST for creation, PUT for updates, DELETE for removal
+- Use `@Validated` for request parameter validation
+- Add Swagger annotations (`@Api`, `@ApiOperation`) for API documentation
+
+```java
+@RestController
+@RequestMapping("/system/user")
+public class SysUserController extends BaseController {
+    
+    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(SysUser user) {
+        startPage();
+        List<SysUser> list = userService.selectUserList(user);
+        return getDataTable(list);
+    }
+}
+```
+
+#### Service Layer (`com.ruoyi.*.service`)
+- Use `@Service` annotation
+- Create interface and implementation pattern (`IService` and `ServiceImpl`)
+- Keep business logic in service layer, not in controllers
+- Use `@Transactional` for database transactions
+- Handle exceptions appropriately with custom exceptions
+
+#### Mapper Layer (`com.ruoyi.*.mapper`)
+- Use MyBatis XML mappers in `resources/mapper` directory
+- Keep SQL queries in XML files, not annotations
+- Use parameterized queries to prevent SQL injection
+- Use `<resultMap>` for complex result mappings
+- Follow naming convention: `selectXxx`, `insertXxx`, `updateXxx`, `deleteXxx`
+
+#### Domain/Entity Layer (`com.ruoyi.*.domain`)
+- Extend `BaseEntity` for common fields (createTime, updateTime, etc.)
+- Use appropriate validation annotations (`@NotNull`, `@NotBlank`, etc.)
+- Implement serialization (`implements Serializable`)
+- Use wrapper classes (Integer, Long) instead of primitives for nullable fields
+
+#### Utility Classes
+- Use existing RuoYi utilities from `com.ruoyi.common.utils`
+- Don't duplicate utility methods that already exist
+- Common utilities: `StringUtils`, `DateUtils`, `SecurityUtils`, `ServletUtils`
+
+### Vue Frontend
+
+#### Component Structure
+- Follow Vue 2.x Options API pattern
+- Organize components in appropriate directories under `src/`
+- Use Single File Components (.vue files)
+- Separate concerns: template, script, style
+
+```vue
+<template>
+  <div class="app-container">
+    <!-- Component template -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ComponentName',
+  data() {
+    return {
+      // data properties
+    }
+  },
+  created() {
+    // lifecycle hooks
+  },
+  methods: {
+    // methods
+  }
+}
+</script>
+
+<style scoped>
+/* Component-specific styles */
+</style>
+```
+
+#### API Calls
+- Define API methods in `src/api/` directory
+- Use the centralized axios instance from `@/utils/request`
+- Group related APIs in same file
+- Use async/await for API calls in components
+
+```javascript
+// In src/api/system/user.js
+import request from '@/utils/request'
+
+export function listUser(query) {
+  return request({
+    url: '/system/user/list',
+    method: 'get',
+    params: query
+  })
+}
+```
+
+#### Vuex Store
+- Use modules in `src/store/modules/`
+- Follow Vuex conventions: state, getters, mutations, actions
+- Use actions for async operations
+- Use mutations for state changes
+
+#### Routing
+- Define routes in `src/router/index.js`
+- Use lazy loading for route components
+- Follow RuoYi permission routing pattern
+- Add proper meta information (title, icon, permissions)
+
+#### Element UI
+- Use Element UI components consistently
+- Follow Element UI naming conventions
+- Use `el-form` with proper validation rules
+- Use `el-table` for data grids with pagination component
+- Maintain consistent spacing and layout with RuoYi theme
+
+#### Styling
+- Use SCSS preprocessor (files in `src/assets/styles/`)
+- Follow existing theme variables in `variables.scss`
+- Use scoped styles in components
+- Maintain responsive design principles
+- Follow RuoYi's existing CSS class conventions
+
+## File Organization
+
+### Backend Structure
+```
+ruoyi-admin/     # Main application module
+ruoyi-framework/ # Framework configuration (security, swagger, etc.)
+ruoyi-system/    # System management module
+ruoyi-common/    # Common utilities and base classes
+ruoyi-generator/ # Code generator
+ruoyi-quartz/    # Scheduled tasks
+ruoyi-app/       # Custom application module
+```
+
+### Frontend Structure
+```
+src/
+  api/           # API request definitions
+  assets/        # Static assets (images, styles, icons)
+  components/    # Reusable components
+  directive/     # Custom Vue directives
+  layout/        # Layout components
+  router/        # Route definitions
+  store/         # Vuex store modules
+  utils/         # Utility functions
+  views/         # Page components
+```
+
+## Best Practices
+
+### Security
+- Always validate user input on both frontend and backend
+- Use `@PreAuthorize` for permission checks
+- Use parameterized queries to prevent SQL injection
+- Sanitize data before displaying in frontend
+- Use JWT tokens from `SecurityUtils.getToken()`
+- Check permissions using `@ss.hasPermi()` and `@ss.hasRole()`
+
+### Performance
+- Use pagination for large data sets (`PageHelper` on backend)
+- Implement proper database indexing
+- Use Redis caching where appropriate
+- Lazy load routes and components in frontend
+- Optimize database queries (avoid N+1 queries)
+
+### Error Handling
+- Use RuoYi's exception handling mechanisms
+- Return proper HTTP status codes
+- Provide meaningful error messages
+- Use `AjaxResult.error()` for error responses
+- Handle async errors properly in frontend
+
+### Code Generation
+- Use RuoYi's built-in code generator when creating new modules
+- Follow generated code patterns for consistency
+- Customize templates in `ruoyi-generator/src/main/resources/vm/` if needed
+
+### Database
+- Use MyBatis XML mappers (in `src/main/resources/mapper/`)
+- Follow naming conventions for SQL statements
+- Use `<include>` for reusable SQL fragments
+- Add proper indexes for frequently queried fields
+- Use transactions for multi-step operations
+
+### API Design
+- Follow RESTful principles
+- Use consistent URL patterns: `/module/entity/action`
+- Return consistent response format using `AjaxResult`
+- Use appropriate HTTP methods (GET, POST, PUT, DELETE)
+- Version APIs if making breaking changes
+
+### Testing
+- Write unit tests for critical business logic
+- Test permission controls thoroughly
+- Test both success and error scenarios
+- Validate input edge cases
+
+### Documentation
+- Add comments for complex business logic
+- Use Swagger annotations for API documentation
+- Keep README files updated
+- Document configuration changes
+
+## Common Patterns
+
+### CRUD Operations (Backend)
+```java
+// Controller
+@GetMapping("/list")
+public TableDataInfo list(Entity entity) {
+    startPage();
+    List<Entity> list = service.selectList(entity);
+    return getDataTable(list);
+}
+
+@PostMapping
+public AjaxResult add(@Validated @RequestBody Entity entity) {
+    return toAjax(service.insert(entity));
+}
+
+@PutMapping
+public AjaxResult edit(@Validated @RequestBody Entity entity) {
+    return toAjax(service.update(entity));
+}
+
+@DeleteMapping("/{ids}")
+public AjaxResult remove(@PathVariable Long[] ids) {
+    return toAjax(service.deleteByIds(ids));
+}
+```
+
+### CRUD Operations (Frontend)
+```javascript
+// List page with table
+data() {
+  return {
+    queryParams: {
+      pageNum: 1,
+      pageSize: 10
+    },
+    tableData: [],
+    total: 0
+  }
+},
+methods: {
+  getList() {
+    this.loading = true;
+    listApi(this.queryParams).then(response => {
+      this.tableData = response.rows;
+      this.total = response.total;
+      this.loading = false;
+    });
+  },
+  handleAdd() {
+    // Open dialog for adding
+  },
+  handleUpdate(row) {
+    // Open dialog for editing
+  },
+  handleDelete(row) {
+    this.$modal.confirm('确认删除?').then(() => {
+      return deleteApi(row.id);
+    }).then(() => {
+      this.getList();
+      this.$modal.msgSuccess("删除成功");
+    })
+  }
+}
+```
+
+## Module Development Workflow
+
+1. **Design database table** (create SQL in `sql/` directory)
+2. **Use code generator** to generate base code (CRUD operations)
+3. **Customize generated code** according to business requirements
+4. **Add business logic** in service layer
+5. **Add permission controls** with `@PreAuthorize`
+6. **Implement frontend** using generated Vue components
+7. **Add menu and permissions** through system menu management
+8. **Test thoroughly** before deployment
+
+## Configuration Files
+
+### Backend Configuration
+- `application.yml` - Main application config
+- `application-druid.yml` - Database connection pool config
+- `logback.xml` - Logging configuration
+- `mybatis-config.xml` - MyBatis configuration
+
+### Frontend Configuration
+- `vue.config.js` - Vue CLI configuration
+- `.env.development` / `.env.production` - Environment variables
+- `package.json` - Dependencies and scripts
+
+## Avoid These Common Mistakes
+
+- ❌ Don't put business logic in controllers
+- ❌ Don't use raw SQL strings in Java code (use MyBatis XML)
+- ❌ Don't skip permission checks on sensitive operations
+- ❌ Don't ignore validation on user inputs
+- ❌ Don't create duplicate utility methods
+- ❌ Don't modify core framework files unless absolutely necessary
+- ❌ Don't use `var` in JavaScript (use `const` or `let`)
+- ❌ Don't skip error handling in async operations
+- ❌ Don't hardcode configuration values (use config files)
+- ❌ Don't forget to add transaction annotations for multi-step database operations
+
+## Development Commands
+
+### Backend
+```bash
+# Run backend (from project root)
+mvn clean install
+cd ruoyi-admin
+mvn spring-boot:run
+
+# Or use provided scripts
+ry.bat / ry.sh
+```
+
+### Frontend
+```bash
+# Navigate to frontend directory
+cd ruoyi-ui
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build:prod
+```
+
+## Additional Notes
+
+- This project uses Chinese language for UI and comments by default
+- Follow the existing code style and patterns in the codebase
+- When in doubt, reference similar existing implementations
+- Leverage RuoYi's built-in features before creating custom solutions
+- Keep the frontend and backend API contracts in sync
+- Use RuoYi's permission system rather than custom implementations
+- Test with different user roles to ensure proper access control
+
