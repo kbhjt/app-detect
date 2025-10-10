@@ -1,95 +1,877 @@
-<p align="center">
-	<img alt="logo" src="https://oscimg.oschina.net/oscnet/up-d3d0a9303e11d522a06cd263f3079027715.png">
-</p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">RuoYi v3.9.0</h1>
-<h4 align="center">基于SpringBoot+Vue前后端分离的Java快速开发框架</h4>
-<p align="center">
-	<a href="https://gitee.com/y_project/RuoYi-Vue/stargazers"><img src="https://gitee.com/y_project/RuoYi-Vue/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue"><img src="https://img.shields.io/badge/RuoYi-v3.9.0-brightgreen.svg"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
-</p>
+# RuoYi-Vue 移动应用隐私合规性检测平台 - 代码风格与规范分析报告
 
-## 平台简介
+> 生成日期: 2025-10-09
+> 项目版本: RuoYi v3.9.0
+> 分析范围: 后端代码(Java) + 前端代码(Vue)
 
-若依是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
+---
 
-* 前端采用Vue、Element UI。
-* 后端采用Spring Boot、Spring Security、Redis & Jwt。
-* 权限认证使用Jwt，支持多终端认证系统。
-* 支持加载动态权限菜单，多方式轻松权限控制。
-* 高效率开发，使用代码生成器可以一键生成前后端代码。
-* 提供了技术栈（[Vue3](https://v3.cn.vuejs.org) [Element Plus](https://element-plus.org/zh-CN) [Vite](https://cn.vitejs.dev)）版本[RuoYi-Vue3](https://gitcode.com/yangzongzhuan/RuoYi-Vue3)，保持同步更新。
-* 提供了单应用版本[RuoYi-Vue-fast](https://gitcode.com/yangzongzhuan/RuoYi-Vue-fast)，Oracle版本[RuoYi-Vue-Oracle](https://gitcode.com/yangzongzhuan/RuoYi-Vue-Oracle)，保持同步更新。
-* 不分离版本，请移步[RuoYi](https://gitee.com/y_project/RuoYi)，微服务版本，请移步[RuoYi-Cloud](https://gitee.com/y_project/RuoYi-Cloud)
-* 阿里云折扣场：[点我进入](http://aly.ruoyi.vip)，腾讯云秒杀场：[点我进入](http://txy.ruoyi.vip)&nbsp;&nbsp;
+## 📋 项目概况
 
-## 内置功能
+### 项目定位
+基于若依(RuoYi)框架开发的**移动应用隐私合规性检测平台**，采用前后端分离架构。
 
-1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
-2.  部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限。
-3.  岗位管理：配置系统用户所属担任职务。
-4.  菜单管理：配置系统菜单，操作权限，按钮权限标识等。
-5.  角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。
-6.  字典管理：对系统中经常使用的一些较为固定的数据进行维护。
-7.  参数管理：对系统动态配置常用参数。
-8.  通知公告：系统通知公告信息发布维护。
-9.  操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
-10. 登录日志：系统登录日志记录查询包含登录异常。
-11. 在线用户：当前系统中活跃用户状态监控。
-12. 定时任务：在线（添加、修改、删除)任务调度包含执行结果日志。
-13. 代码生成：前后端代码的生成（java、html、xml、sql）支持CRUD下载 。
-14. 系统接口：根据业务代码自动生成相关的api接口文档。
-15. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
-16. 缓存监控：对系统的缓存信息查询，命令统计等。
-17. 在线构建器：拖动表单元素生成相应的HTML代码。
-18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
+### 技术栈总览
 
-## 在线体验
+**后端技术栈:**
+- Java 1.8
+- Spring Boot 2.5.15
+- Spring Security 5.7.14
+- MyBatis (XML映射方式)
+- MySQL + Druid连接池
+- Redis缓存
+- JWT认证
+- Swagger 3.0
+- Quartz定时任务
+- Velocity代码生成
 
-- admin/admin123  
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
+**前端技术栈:**
+- Vue 2.6.12
+- Element UI 2.15.14
+- Vuex 3.6.0
+- Vue Router 3.4.9
+- Axios 0.28.1
+- ECharts 5.4.0
 
-演示地址：http://vue.ruoyi.vip  
-文档地址：http://doc.ruoyi.vip
+---
 
-## 演示图
+## 🏗️ 项目架构分析
 
-<table>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/cd1f90be5f2684f4560c9519c0f2a232ee8.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/1cbcf0e6f257c7d3a063c0e3f2ff989e4b3.jpg"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-8074972883b5ba0622e13246738ebba237a.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-9f88719cdfca9af2e58b352a20e23d43b12.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-39bf2584ec3a529b0d5a3b70d15c9b37646.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-936ec82d1f4872e1bc980927654b6007307.png"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-b2d62ceb95d2dd9b3fbe157bb70d26001e9.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-d67451d308b7a79ad6819723396f7c3d77a.png"/></td>
-    </tr>	 
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/5e8c387724954459291aafd5eb52b456f53.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/644e78da53c2e92a95dfda4f76e6d117c4b.jpg"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-8370a0d02977eebf6dbf854c8450293c937.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-49003ed83f60f633e7153609a53a2b644f7.png"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-d4fe726319ece268d4746602c39cffc0621.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-c195234bbcd30be6927f037a6755e6ab69c.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/b6115bc8c31de52951982e509930b20684a.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-5e4daac0bb59612c5038448acbcef235e3a.png"/></td>
-    </tr>
-</table>
+### 后端模块结构
 
+```
+RuoYi-Vue/
+├── ruoyi-admin/          # 主应用模块（启动入口）
+├── ruoyi-framework/      # 框架配置（Security、Swagger、Redis等）
+├── ruoyi-system/         # 系统管理模块（用户、角色、菜单等）
+├── ruoyi-common/         # 通用工具类和基础类
+├── ruoyi-generator/      # 代码生成器
+├── ruoyi-quartz/         # 定时任务模块
+└── ruoyi-app/            # ⭐业务模块（隐私合规性检测相关业务）
+```
 
-## 若依前后端分离交流群
+**关键发现:**
+- 项目采用**多模块Maven项目**结构
+- `ruoyi-app`模块为业务核心模块
+- 目前只有示例代码(`TbDish`菜品管理)，隐私合规业务代码待开发
 
-QQ群： [![加入QQ群](https://img.shields.io/badge/已满-937441-blue.svg)](https://jq.qq.com/?_wv=1027&k=5bVB1og) [![加入QQ群](https://img.shields.io/badge/已满-887144332-blue.svg)](https://jq.qq.com/?_wv=1027&k=5eiA4DH) [![加入QQ群](https://img.shields.io/badge/已满-180251782-blue.svg)](https://jq.qq.com/?_wv=1027&k=5AxMKlC) [![加入QQ群](https://img.shields.io/badge/已满-104180207-blue.svg)](https://jq.qq.com/?_wv=1027&k=51G72yr) [![加入QQ群](https://img.shields.io/badge/已满-186866453-blue.svg)](https://jq.qq.com/?_wv=1027&k=VvjN2nvu) [![加入QQ群](https://img.shields.io/badge/已满-201396349-blue.svg)](https://jq.qq.com/?_wv=1027&k=5vYAqA05) [![加入QQ群](https://img.shields.io/badge/已满-101456076-blue.svg)](https://jq.qq.com/?_wv=1027&k=kOIINEb5) [![加入QQ群](https://img.shields.io/badge/已满-101539465-blue.svg)](https://jq.qq.com/?_wv=1027&k=UKtX5jhs) [![加入QQ群](https://img.shields.io/badge/已满-264312783-blue.svg)](https://jq.qq.com/?_wv=1027&k=EI9an8lJ) [![加入QQ群](https://img.shields.io/badge/已满-167385320-blue.svg)](https://jq.qq.com/?_wv=1027&k=SWCtLnMz) [![加入QQ群](https://img.shields.io/badge/已满-104748341-blue.svg)](https://jq.qq.com/?_wv=1027&k=96Dkdq0k) [![加入QQ群](https://img.shields.io/badge/已满-160110482-blue.svg)](https://jq.qq.com/?_wv=1027&k=0fsNiYZt) [![加入QQ群](https://img.shields.io/badge/已满-170801498-blue.svg)](https://jq.qq.com/?_wv=1027&k=7xw4xUG1) [![加入QQ群](https://img.shields.io/badge/已满-108482800-blue.svg)](https://jq.qq.com/?_wv=1027&k=eCx8eyoJ) [![加入QQ群](https://img.shields.io/badge/已满-101046199-blue.svg)](https://jq.qq.com/?_wv=1027&k=SpyH2875) [![加入QQ群](https://img.shields.io/badge/已满-136919097-blue.svg)](https://jq.qq.com/?_wv=1027&k=tKEt51dz) [![加入QQ群](https://img.shields.io/badge/已满-143961921-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=0vBbSb0ztbBgVtn3kJS-Q4HUNYwip89G&authKey=8irq5PhutrZmWIvsUsklBxhj57l%2F1nOZqjzigkXZVoZE451GG4JHPOqW7AW6cf0T&noverify=0&group_code=143961921) [![加入QQ群](https://img.shields.io/badge/已满-174951577-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=ZFAPAbp09S2ltvwrJzp7wGlbopsc0rwi&authKey=HB2cxpxP2yspk%2Bo3WKTBfktRCccVkU26cgi5B16u0KcAYrVu7sBaE7XSEqmMdFQp&noverify=0&group_code=174951577) [![加入QQ群](https://img.shields.io/badge/已满-161281055-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Fn2aF5IHpwsy8j6VlalNJK6qbwFLFHat&authKey=uyIT%2B97x2AXj3odyXpsSpVaPMC%2Bidw0LxG5MAtEqlrcBcWJUA%2FeS43rsF1Tg7IRJ&noverify=0&group_code=161281055) [![加入QQ群](https://img.shields.io/badge/已满-138988063-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=XIzkm_mV2xTsUtFxo63bmicYoDBA6Ifm&authKey=dDW%2F4qsmw3x9govoZY9w%2FoWAoC4wbHqGal%2BbqLzoS6VBarU8EBptIgPKN%2FviyC8j&noverify=0&group_code=138988063) [![加入QQ群](https://img.shields.io/badge/已满-151450850-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=DkugnCg68PevlycJSKSwjhFqfIgrWWwR&authKey=pR1Pa5lPIeGF%2FFtIk6d%2FGB5qFi0EdvyErtpQXULzo03zbhopBHLWcuqdpwY241R%2F&noverify=0&group_code=151450850) [![加入QQ群](https://img.shields.io/badge/已满-224622315-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=F58bgRa-Dp-rsQJThiJqIYv8t4-lWfXh&authKey=UmUs4CVG5OPA1whvsa4uSespOvyd8%2FAr9olEGaWAfdLmfKQk%2FVBp2YU3u2xXXt76&noverify=0&group_code=224622315) [![加入QQ群](https://img.shields.io/badge/已满-287842588-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Nxb2EQ5qozWa218Wbs7zgBnjLSNk_tVT&authKey=obBKXj6SBKgrFTJZx0AqQnIYbNOvBB2kmgwWvGhzxR67RoRr84%2Bus5OadzMcdJl5&noverify=0&group_code=287842588) [![加入QQ群](https://img.shields.io/badge/已满-187944233-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=numtK1M_I4eVd2Gvg8qtbuL8JgX42qNh&authKey=giV9XWMaFZTY%2FqPlmWbkB9g3fi0Ev5CwEtT9Tgei0oUlFFCQLDp4ozWRiVIzubIm&noverify=0&group_code=187944233) [![加入QQ群](https://img.shields.io/badge/已满-228578329-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=G6r5KGCaa3pqdbUSXNIgYloyb8e0_L0D&authKey=4w8tF1eGW7%2FedWn%2FHAypQksdrML%2BDHolQSx7094Agm7Luakj9EbfPnSTxSi2T1LQ&noverify=0&group_code=228578329) [![加入QQ群](https://img.shields.io/badge/191164766-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=GsOo-OLz53J8y_9TPoO6XXSGNRTgbFxA&authKey=R7Uy%2Feq%2BZsoKNqHvRKhiXpypW7DAogoWapOawUGHokJSBIBIre2%2FoiAZeZBSLuBc&noverify=0&group_code=191164766) 点击按钮入群。
+### 前端目录结构
+
+```
+ruoyi-ui/src/
+├── api/              # API接口定义
+├── assets/           # 静态资源（图片、样式、图标）
+├── components/       # 可复用组件
+├── directive/        # 自定义指令
+├── layout/           # 布局组件
+├── router/           # 路由配置
+├── store/            # Vuex状态管理
+├── utils/            # 工具函数
+└── views/            # 页面组件
+    └── app/          # ⭐业务页面（隐私合规相关页面）
+```
+
+---
+
+## 💻 后端代码风格与规范
+
+### 1. 分层架构规范
+
+项目严格遵循**经典三层架构**:
+
+```
+Controller层 → Service层 → Mapper层 → Database
+```
+
+#### 📌 Controller层规范
+
+**关键特征:**
+```java
+@RestController
+@RequestMapping("/app/dish")
+public class TbDishController extends BaseController {
+    
+    @Autowired
+    private ITbDishService tbDishService;
+    
+    @PreAuthorize("@ss.hasPermi('app:dish:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(TbDish tbDish) {
+        startPage();  // 启动分页
+        List<TbDish> list = tbDishService.selectTbDishList(tbDish);
+        return getDataTable(list);  // 返回分页数据
+    }
+}
+```
+
+**规范要点:**
+- ✅ 使用`@RestController`声明RESTful控制器
+- ✅ 所有Controller继承`BaseController`
+- ✅ 使用`@PreAuthorize`进行权限控制
+- ✅ 权限标识格式: `模块:功能:操作` (如`app:dish:list`)
+- ✅ 使用`@Autowired`注入Service接口(不是实现类)
+- ✅ 返回类型统一为`AjaxResult`或`TableDataInfo`
+- ✅ RESTful URL设计: `/模块/实体/操作`
+- ✅ HTTP方法语义化:
+    - `@GetMapping` - 查询
+    - `@PostMapping` - 新增
+    - `@PutMapping` - 修改
+    - `@DeleteMapping` - 删除
+- ✅ 添加`@Log`注解记录操作日志
+- ✅ 使用`@Validated`进行参数校验
+
+#### 📌 Service层规范
+
+**接口定义:**
+```java
+public interface ITbDishService {
+    public TbDish selectTbDishById(Long id);
+    public List<TbDish> selectTbDishList(TbDish tbDish);
+    public int insertTbDish(TbDish tbDish);
+    public int updateTbDish(TbDish tbDish);
+    public int deleteTbDishByIds(Long[] ids);
+}
+```
+
+**实现类:**
+```java
+@Service
+public class TbDishServiceImpl implements ITbDishService {
+    
+    @Autowired
+    private TbDishMapper tbDishMapper;
+    
+    @Override
+    public int insertTbDish(TbDish tbDish) {
+        tbDish.setCreateTime(DateUtils.getNowDate());
+        return tbDishMapper.insertTbDish(tbDish);
+    }
+}
+```
+
+**规范要点:**
+- ✅ 接口命名: `I + 实体名 + Service`
+- ✅ 实现类命名: `实体名 + ServiceImpl`
+- ✅ 使用`@Service`注解
+- ✅ 方法命名规范:
+    - 查询单个: `selectXxxById`
+    - 查询列表: `selectXxxList`
+    - 新增: `insertXxx`
+    - 修改: `updateXxx`
+    - 删除: `deleteXxxByIds`
+- ✅ 业务逻辑在Service层实现，Controller只做参数处理和调用
+- ✅ 涉及多表操作使用`@Transactional`注解
+
+#### 📌 Mapper层规范
+
+**接口:**
+```java
+public interface TbDishMapper {
+    public TbDish selectTbDishById(Long id);
+    public List<TbDish> selectTbDishList(TbDish tbDish);
+    public int insertTbDish(TbDish tbDish);
+    public int updateTbDish(TbDish tbDish);
+    public int deleteTbDishByIds(Long[] ids);
+}
+```
+
+**XML映射:**
+```xml
+<mapper namespace="com.ruoyi.app.mapper.TbDishMapper">
+    
+    <resultMap type="TbDish" id="TbDishResult">
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+    </resultMap>
+    
+    <sql id="selectTbDishVo">
+        select id, name, price from tb_dish
+    </sql>
+    
+    <select id="selectTbDishList" parameterType="TbDish" resultMap="TbDishResult">
+        <include refid="selectTbDishVo"/>
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>
+```
+
+**规范要点:**
+- ✅ **SQL写在XML文件中，不使用注解**
+- ✅ XML文件位置: `src/main/resources/mapper/模块/XxxMapper.xml`
+- ✅ 使用`<resultMap>`定义复杂映射
+- ✅ 使用`<sql>`定义可复用SQL片段
+- ✅ 使用`<if>`标签实现动态SQL
+- ✅ 使用`#{}`参数化查询，防止SQL注入
+- ✅ 模糊查询使用: `concat('%', #{name}, '%')`
+- ✅ 批量删除使用`<foreach>`标签
+
+#### 📌 Domain实体类规范
+
+```java
+public class TbDish extends BaseEntity {
+    
+    private static final long serialVersionUID = 1L;
+    
+    /** 主键 */
+    private Long id;
+    
+    /** 菜品名称 */
+    @Excel(name = "菜品名称")
+    private String name;
+    
+    /** 菜品价格 */
+    @Excel(name = "菜品价格")
+    private BigDecimal price;
+    
+    // Getter和Setter方法
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("id", getId())
+            .append("name", getName())
+            .toString();
+    }
+}
+```
+
+**规范要点:**
+- ✅ 所有实体类继承`BaseEntity`（提供createTime、updateTime等字段）
+- ✅ 实现`Serializable`接口
+- ✅ 使用包装类型（Long、Integer）而非基本类型
+- ✅ 字段添加JavaDoc注释
+- ✅ 使用`@Excel`注解标注导出字段
+- ✅ 使用`ToStringBuilder`重写toString方法
+- ✅ 金额字段使用`BigDecimal`类型
+- ✅ 布尔值使用`0/1`的`Long`类型存储
+
+### 2. 统一响应格式
+
+#### AjaxResult - 通用返回对象
+
+```java
+{
+    "code": 200,      // 状态码
+    "msg": "操作成功",  // 消息
+    "data": {...}     // 数据
+}
+```
+
+**使用规范:**
+```java
+// 成功
+return AjaxResult.success();
+return AjaxResult.success("查询成功", data);
+
+// 失败
+return AjaxResult.error("操作失败");
+
+// 根据影响行数判断
+return toAjax(rows);  // rows > 0 返回success，否则error
+```
+
+#### TableDataInfo - 分页返回对象
+
+```java
+{
+    "code": 200,
+    "msg": "查询成功",
+    "rows": [...],     // 数据列表
+    "total": 100       // 总记录数
+}
+```
+
+### 3. 权限控制规范
+
+**权限注解:**
+```java
+@PreAuthorize("@ss.hasPermi('app:dish:list')")    // 权限判断
+@PreAuthorize("@ss.hasRole('admin')")             // 角色判断
+```
+
+**权限标识规范:**
+- 格式: `模块:功能:操作`
+- 示例:
+    - `app:dish:list` - 菜品列表查询
+    - `app:dish:add` - 菜品新增
+    - `app:dish:edit` - 菜品修改
+    - `app:dish:remove` - 菜品删除
+    - `app:dish:export` - 菜品导出
+
+### 4. 日志记录规范
+
+```java
+@Log(title = "菜品管理", businessType = BusinessType.INSERT)
+@PostMapping
+public AjaxResult add(@RequestBody TbDish tbDish) {
+    return toAjax(tbDishService.insertTbDish(tbDish));
+}
+```
+
+**业务类型枚举:**
+- `BusinessType.INSERT` - 新增
+- `BusinessType.UPDATE` - 修改
+- `BusinessType.DELETE` - 删除
+- `BusinessType.EXPORT` - 导出
+- `BusinessType.IMPORT` - 导入
+- `BusinessType.OTHER` - 其他
+
+### 5. 异常处理规范
+
+**全局异常处理器:** `GlobalExceptionHandler`
+
+**自定义异常:**
+- `ServiceException` - 业务异常
+- `UserException` - 用户异常
+- `FileException` - 文件异常
+
+**使用示例:**
+```java
+if (user == null) {
+    throw new ServiceException("用户不存在");
+}
+```
+
+### 6. 工具类使用规范
+
+**常用工具类:**
+```
+com.ruoyi.common.utils.
+├── StringUtils        # 字符串工具类
+├── DateUtils          # 日期工具类
+├── SecurityUtils      # 安全工具类（获取当前用户信息）
+├── ServletUtils       # Servlet工具类
+├── DictUtils          # 字典工具类
+├── ExcelUtil          # Excel工具类
+└── PageUtils          # 分页工具类
+```
+
+**关键原则:** ⚠️ 不要重复造轮子，优先使用框架提供的工具类
+
+---
+
+## 🎨 前端代码风格与规范
+
+### 1. 组件结构规范
+
+**标准Vue组件结构:**
+```vue
+<template>
+  <div class="app-container">
+    <!-- 查询表单 -->
+    <el-form :model="queryParams" ref="queryForm">
+      <!-- 表单项 -->
+    </el-form>
+    
+    <!-- 操作按钮 -->
+    <el-row :gutter="10" class="mb8">
+      <el-button v-hasPermi="['app:dish:add']">新增</el-button>
+    </el-row>
+    
+    <!-- 数据表格 -->
+    <el-table v-loading="loading" :data="dishList">
+      <!-- 表格列 -->
+    </el-table>
+    
+    <!-- 分页组件 -->
+    <pagination :total="total" @pagination="getList"/>
+    
+    <!-- 对话框 -->
+    <el-dialog :title="title" :visible.sync="open">
+      <!-- 对话框内容 -->
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { listDish, getDish, delDish, addDish, updateDish } from "@/api/app/dish"
+
+export default {
+  name: "Dish",
+  data() {
+    return {
+      loading: true,
+      queryParams: { pageNum: 1, pageSize: 10 },
+      dishList: [],
+      total: 0
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() { /* ... */ },
+    handleAdd() { /* ... */ },
+    handleUpdate(row) { /* ... */ },
+    handleDelete(row) { /* ... */ }
+  }
+}
+</script>
+
+<style scoped>
+/* 组件样式 */
+</style>
+```
+
+**规范要点:**
+- ✅ 使用Vue 2 Options API
+- ✅ 组件命名使用PascalCase
+- ✅ 使用`<style scoped>`避免样式污染
+- ✅ 使用`v-hasPermi`指令控制按钮权限
+- ✅ 统一使用`app-container`作为页面容器类
+
+### 2. API调用规范
+
+**API文件结构:** `src/api/模块/功能.js`
+
+**标准API定义:**
+```javascript
+import request from '@/utils/request'
+
+// 查询列表
+export function listDish(query) {
+  return request({
+    url: '/app/dish/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询详情
+export function getDish(id) {
+  return request({
+    url: '/app/dish/' + id,
+    method: 'get'
+  })
+}
+
+// 新增
+export function addDish(data) {
+  return request({
+    url: '/app/dish',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改
+export function updateDish(data) {
+  return request({
+    url: '/app/dish',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除
+export function delDish(id) {
+  return request({
+    url: '/app/dish/' + id,
+    method: 'delete'
+  })
+}
+```
+
+**规范要点:**
+- ✅ 所有请求通过`request`工具发送（自动添加Token）
+- ✅ GET请求使用`params`传参
+- ✅ POST/PUT请求使用`data`传参
+- ✅ 函数命名: `list/get/add/update/del + 实体名`
+
+### 3. 数据交互规范
+
+**查询列表:**
+```javascript
+methods: {
+  getList() {
+    this.loading = true
+    listDish(this.queryParams).then(response => {
+      this.dishList = response.rows
+      this.total = response.total
+      this.loading = false
+    })
+  }
+}
+```
+
+**新增/修改:**
+```javascript
+submitForm() {
+  this.$refs["form"].validate(valid => {
+    if (valid) {
+      if (this.form.id != null) {
+        updateDish(this.form).then(response => {
+          this.$modal.msgSuccess("修改成功")
+          this.open = false
+          this.getList()
+        })
+      } else {
+        addDish(this.form).then(response => {
+          this.$modal.msgSuccess("新增成功")
+          this.open = false
+          this.getList()
+        })
+      }
+    }
+  })
+}
+```
+
+**删除操作:**
+```javascript
+handleDelete(row) {
+  const ids = row.id || this.ids
+  this.$modal.confirm('是否确认删除编号为"' + ids + '"的数据项？')
+    .then(() => delDish(ids))
+    .then(() => {
+      this.getList()
+      this.$modal.msgSuccess("删除成功")
+    })
+}
+```
+
+### 4. 表单验证规范
+
+```javascript
+data() {
+  return {
+    rules: {
+      name: [
+        { required: true, message: "菜品名称不能为空", trigger: "blur" }
+      ],
+      price: [
+        { required: true, message: "菜品价格不能为空", trigger: "blur" }
+      ]
+    }
+  }
+}
+```
+
+### 5. 权限控制规范
+
+**按钮权限:**
+```vue
+<el-button
+  v-hasPermi="['app:dish:add']"
+  @click="handleAdd"
+>新增</el-button>
+```
+
+**路由权限:** 在路由meta中配置
+```javascript
+{
+  path: 'dish',
+  component: () => import('@/views/app/dish/index'),
+  meta: { 
+    title: '菜品管理', 
+    icon: 'dish',
+    perms: ['app:dish:list']
+  }
+}
+```
+
+### 6. 常用组件
+
+**框架提供的组件:**
+```
+components/
+├── Pagination/       # 分页组件
+├── ImageUpload/      # 图片上传
+├── FileUpload/       # 文件上传
+├── Editor/           # 富文本编辑器
+├── DictTag/          # 字典标签
+├── RightToolbar/     # 右侧工具栏
+└── ImagePreview/     # 图片预览
+```
+
+**使用示例:**
+```vue
+<!-- 分页 -->
+<pagination
+  :total="total"
+  :page.sync="queryParams.pageNum"
+  :limit.sync="queryParams.pageSize"
+  @pagination="getList"
+/>
+
+<!-- 图片上传 -->
+<image-upload v-model="form.image"/>
+
+<!-- 字典标签 -->
+<dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex"/>
+```
+
+---
+
+## 🎯 代码生成器使用规范
+
+### 使用流程
+
+1. **设计数据库表**
+   ```sql
+   CREATE TABLE `tb_xxx` (
+     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+     `name` varchar(100) DEFAULT NULL COMMENT '名称',
+     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+     PRIMARY KEY (`id`)
+   ) ENGINE=InnoDB COMMENT='业务表';
+   ```
+
+2. **访问代码生成菜单**
+    - 系统工具 → 代码生成 → 导入表
+
+3. **配置生成信息**
+    - 基本信息: 作者、包名、模块名
+    - 字段信息: 显示类型、查询方式
+    - 生成信息: 生成路径、上级菜单
+
+4. **生成代码**
+    - 下载代码包
+    - 将后端代码放入`ruoyi-app`模块
+    - 将前端代码放入`ruoyi-ui/src/views/app`
+
+5. **添加菜单权限**
+    - 系统管理 → 菜单管理 → 新增菜单
+
+**生成的代码结构:**
+```
+后端:
+  - TbXxxController.java
+  - ITbXxxService.java
+  - TbXxxServiceImpl.java
+  - TbXxxMapper.java
+  - TbXxxMapper.xml
+  - TbXxx.java
+
+前端:
+  - xxx/index.vue
+  - xxx.js (API)
+```
+
+---
+
+## 📝 命名规范总结
+
+### 后端命名规范
+
+| 类型 | 规范 | 示例 |
+|-----|------|------|
+| 包名 | 全小写，点分隔 | `com.ruoyi.app.controller` |
+| 类名 | 大驼峰(PascalCase) | `TbDishController` |
+| 方法名 | 小驼峰(camelCase) | `selectTbDishList` |
+| 常量 | 全大写，下划线分隔 | `MAX_RETRY_COUNT` |
+| 变量 | 小驼峰 | `tbDish`, `dishList` |
+| Controller | 实体名+Controller | `TbDishController` |
+| Service接口 | I+实体名+Service | `ITbDishService` |
+| Service实现 | 实体名+ServiceImpl | `TbDishServiceImpl` |
+| Mapper接口 | 实体名+Mapper | `TbDishMapper` |
+| Mapper XML | 实体名+Mapper.xml | `TbDishMapper.xml` |
+| Domain实体 | 表名转驼峰 | `TbDish` (对应tb_dish表) |
+
+### 前端命名规范
+
+| 类型 | 规范 | 示例 |
+|-----|------|------|
+| 组件名 | PascalCase | `Dish`, `DishList` |
+| 文件名 | kebab-case或index.vue | `dish/index.vue` |
+| 方法名 | camelCase | `getList`, `handleAdd` |
+| 变量名 | camelCase | `dishList`, `queryParams` |
+| 常量 | UPPER_CASE | `MAX_SIZE` |
+| API函数 | 动词+实体名 | `listDish`, `getDish` |
+
+### 数据库命名规范
+
+| 类型 | 规范 | 示例 |
+|-----|------|------|
+| 表名 | 小写+下划线 | `tb_dish`, `sys_user` |
+| 字段名 | 小写+下划线 | `dish_name`, `create_time` |
+| 主键 | 表名_id 或 id | `dish_id`, `id` |
+| 外键 | 关联表_id | `user_id`, `dept_id` |
+
+---
+
+## 🔒 安全规范
+
+### 1. SQL注入防护
+- ✅ 使用`#{}`参数化查询
+- ❌ 禁止使用字符串拼接SQL
+- ✅ 使用MyBatis动态SQL标签
+
+### 2. XSS防护
+- ✅ 项目已配置XssFilter
+- ✅ 前端显示数据自动转义
+- ✅ 富文本内容需特殊处理
+
+### 3. CSRF防护
+- ✅ 使用JWT Token认证
+- ✅ 重要操作需二次确认
+
+### 4. 权限控制
+- ✅ Controller层使用`@PreAuthorize`
+- ✅ 前端使用`v-hasPermi`指令
+- ✅ 数据权限使用`@DataScope`
+
+### 5. 数据校验
+- ✅ 前端表单验证
+- ✅ 后端使用`@Validated`
+- ✅ 自定义校验注解
+
+---
+
+## 📊 性能优化规范
+
+### 1. 数据库层面
+- ✅ 使用分页查询，避免全表扫描
+- ✅ 为常用查询字段添加索引
+- ✅ 避免N+1查询问题
+- ✅ 使用连接池（Druid）
+
+### 2. 缓存使用
+- ✅ Redis缓存热点数据
+- ✅ 字典数据缓存
+- ✅ 用户权限信息缓存
+
+### 3. 前端优化
+- ✅ 路由懒加载
+- ✅ 图片压缩和懒加载
+- ✅ 防抖和节流
+
+---
+
+## 🎓 开发建议
+
+### 对于隐私合规性检测业务
+
+基于现有框架，建议业务模块命名规范:
+
+#### 后端模块建议
+```
+com.ruoyi.app.
+├── controller/
+│   ├── AppInfoController.java           # 应用信息管理
+│   ├── PrivacyCheckController.java      # 隐私检测管理
+│   ├── ComplianceRuleController.java    # 合规规则管理
+│   └── CheckReportController.java       # 检测报告管理
+├── domain/
+│   ├── AppInfo.java                     # 应用信息实体
+│   ├── PrivacyCheck.java                # 隐私检测实体
+│   ├── ComplianceRule.java              # 合规规则实体
+│   └── CheckReport.java                 # 检测报告实体
+├── service/
+│   ├── IAppInfoService.java
+│   ├── IPrivacyCheckService.java
+│   ├── IComplianceRuleService.java
+│   └── ICheckReportService.java
+└── mapper/
+    ├── AppInfoMapper.java
+    ├── PrivacyCheckMapper.java
+    ├── ComplianceRuleMapper.java
+    └── CheckReportMapper.java
+```
+
+#### 前端模块建议
+```
+src/views/app/
+├── appinfo/                # 应用管理
+│   └── index.vue
+├── privacy-check/          # 隐私检测
+│   ├── index.vue
+│   └── detail.vue
+├── compliance-rule/        # 合规规则
+│   └── index.vue
+└── check-report/           # 检测报告
+    ├── index.vue
+    └── detail.vue
+```
+
+#### 权限标识建议
+```
+app:appinfo:list            # 应用列表
+app:appinfo:add             # 应用新增
+app:privacy:check           # 执行检测
+app:privacy:view            # 查看检测结果
+app:rule:list               # 规则列表
+app:rule:edit               # 规则编辑
+app:report:export           # 报告导出
+```
+
+### 开发流程建议
+
+1. **数据库设计** → 设计业务表结构
+2. **代码生成** → 使用代码生成器生成基础CRUD
+3. **业务定制** → 在生成代码基础上添加业务逻辑
+4. **权限配置** → 添加菜单和权限
+5. **前端联调** → 对接前后端接口
+6. **测试验证** → 功能测试、权限测试
+
+---
+
+## ✅ 代码检查清单
+
+### 后端代码提交前检查
+- [ ] Controller是否继承BaseController
+- [ ] 是否添加权限注解@PreAuthorize
+- [ ] 是否添加日志注解@Log
+- [ ] 返回类型是否统一(AjaxResult/TableDataInfo)
+- [ ] Service是否使用接口+实现模式
+- [ ] SQL是否写在XML文件中
+- [ ] 是否使用参数化查询
+- [ ] 实体类是否继承BaseEntity
+- [ ] 重要操作是否添加事务注解
+- [ ] 是否使用框架提供的工具类
+
+### 前端代码提交前检查
+- [ ] 组件是否使用标准结构(template/script/style)
+- [ ] API是否定义在api目录下
+- [ ] 是否使用统一的request工具
+- [ ] 按钮是否添加v-hasPermi权限控制
+- [ ] 表单是否添加验证规则
+- [ ] 是否使用框架提供的组件
+- [ ] 删除操作是否有二次确认
+- [ ] 是否处理loading状态
+- [ ] 错误是否有提示信息
+
+---
+
+## 📚 参考资源
+
+### 官方文档
+- 若依官网: http://ruoyi.vip
+- 若依文档: http://doc.ruoyi.vip
+- 在线演示: http://vue.ruoyi.vip
+
+### 技术文档
+- Spring Boot: https://spring.io/projects/spring-boot
+- MyBatis: https://mybatis.org/mybatis-3/zh/index.html
+- Vue 2: https://v2.cn.vuejs.org/
+- Element UI: https://element.eleme.cn/#/zh-CN
+
+---
+
+## 🎯 总结
+
+### 核心特点
+1. **规范统一**: 严格的分层架构和命名规范
+2. **权限完善**: 细粒度的权限控制体系
+3. **易于扩展**: 基于代码生成器快速开发
+4. **安全可靠**: 多层次的安全防护机制
+5. **性能优化**: 缓存、分页、连接池等优化措施
+
+### 开发准则
+- 🎯 遵循框架规范，保持代码一致性
+- 🔒 安全第一，权限控制不可省略
+- 📝 代码注释清晰，便于维护
+- 🚀 优先使用框架提供的功能和组件
+- 🧪 编写可测试的代码，确保质量
+
+---
+
+**文档生成完成** ✨
+
+祝您开发顺利！如有问题，请参考若依官方文档或社区支持。
+
