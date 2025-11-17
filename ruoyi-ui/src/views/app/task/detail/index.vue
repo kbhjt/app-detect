@@ -1,176 +1,322 @@
 <template>
   <div class="app-container task-detail-container">
-    <!-- 顶部应用信息栏 -->
-    <div class="app-header">
-      <div class="app-info-section">
-        <img :src="appInfo.icon" class="app-logo" />
-        <span class="app-name">{{ appInfo.name }}</span>
+    <!-- 顶部区域 -->
+    <div class="top-section">
+      <!-- 第一行：APP名称和操作按钮 -->
+      <div class="header-row">
+        <div class="app-info">
+          <span class="app-label">APP名称</span>
+          <el-button size="small" plain>上传隐私政策</el-button>
+        </div>
+        <div class="header-actions">
+          <el-button type="primary" size="small" @click="handleCompare">
+            应用对比
+          </el-button>
+          <el-button type="danger" size="small" @click="handleStopTask">
+            终止任务
+          </el-button>
+        </div>
       </div>
-      <div class="header-actions">
-        <el-button type="primary" size="small" @click="handleUploadNewVersion">
-          上传新版本
-        </el-button>
-        <el-button type="danger" size="small" @click="handleStopTask">
-          停止任务
-        </el-button>
-        <el-dropdown trigger="click" @command="handleMoreAction">
-          <span class="el-dropdown-link">
-            <i class="el-icon-more"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="export">导出报告</el-dropdown-item>
-            <el-dropdown-item command="share">分享链接</el-dropdown-item>
-            <el-dropdown-item command="delete" divided>删除任务</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-    </div>
 
-    <!-- 主要内容区域 -->
-    <div class="content-wrapper">
-      <!-- 左侧：动态数据采集 -->
-      <div class="left-panel">
-        <el-card class="panel-card">
-          <div slot="header" class="card-header">
-            <i class="el-icon-cpu"></i>
+      <!-- 第二行：三个功能区域标题和按钮 -->
+      <div class="function-areas">
+        <!-- 动态数据采集区 -->
+        <div class="function-area">
+          <div class="area-title">
+            <i class="el-icon-s-data"></i>
             <span>动态数据采集</span>
           </div>
-          <div class="collect-options">
-            <el-button 
+          <div class="area-buttons">
+            <el-button
               :type="collectMode === 'auto' ? 'primary' : 'default'"
-              :plain="collectMode !== 'auto'"
               size="small"
-              @click="collectMode = 'auto'"
+              @click="handleCollectModeChange('auto')"
             >
               自动采集
             </el-button>
-            <el-button 
-              :type="collectMode === 'manual' ? 'danger' : 'default'"
-              :plain="collectMode !== 'manual'"
+            <el-button
+              :type="collectMode === 'manual' ? 'primary' : 'default'"
               size="small"
-              @click="collectMode = 'manual'"
+              @click="handleCollectModeChange('manual')"
             >
               人工采集
             </el-button>
           </div>
-          <div class="collect-status">
-            <el-tag :type="collectMode === 'auto' ? 'success' : 'warning'" size="small">
-              {{ collectMode === 'auto' ? '最高优先级(自选项)' : '人工采集中' }}
-            </el-tag>
+          <!-- 任务播报 -->
+          <div class="task-broadcast">
+            <transition name="slide-up" mode="out-in">
+              <div :key="currentTaskIndex" class="broadcast-text">
+                {{ taskBroadcasts[currentTaskIndex] }}
+              </div>
+            </transition>
           </div>
+        </div>
 
-          <!-- 手机截图预览区域 -->
-          <div class="phone-preview">
-            <div class="preview-placeholder">
-              <i class="el-icon-mobile-phone"></i>
-              <p>手机截图已不可展</p>
-            </div>
-          </div>
-        </el-card>
-      </div>
-
-      <!-- 中间：应用合规分析 -->
-      <div class="middle-panel">
-        <el-card class="panel-card">
-          <div slot="header" class="card-header">
-            <i class="el-icon-data-analysis"></i>
+        <!-- 应用合规分析区 -->
+        <div class="function-area">
+          <div class="area-title">
+            <i class="el-icon-document"></i>
             <span>应用合规分析</span>
           </div>
-
-          <!-- 分析标签页 -->
-          <el-tabs v-model="activeTab" class="analysis-tabs">
-            <el-tab-pane label="基本信息" name="basic"></el-tab-pane>
-            <el-tab-pane label="SDK信息" name="sdk"></el-tab-pane>
-            <el-tab-pane label="权限分析" name="permission"></el-tab-pane>
-            <el-tab-pane label="行为分析" name="behavior"></el-tab-pane>
-          </el-tabs>
-
-          <!-- 存在线索 -->
-          <div class="clue-section">
-            <div class="clue-header">
-              <i class="el-icon-warning"></i>
-              <span>存在线索：</span>
-              <el-tag type="warning" size="small">信息</el-tag>
-            </div>
-            <div class="clue-tip">
-              当前手机信号：暂无
-            </div>
+          <div class="area-buttons">
+            <el-button
+              v-for="tab in analysisTabs"
+              :key="tab.value"
+              :type="activeTab === tab.value ? 'primary' : 'default'"
+              size="small"
+              @click="handleTabChange(tab.value)"
+            >
+              {{ tab.label }}
+            </el-button>
           </div>
+        </div>
 
-          <!-- 获取权限详情 -->
-          <div class="permission-detail">
-            <div class="permission-header">
-              <span class="header-title">获取权限</span>
-            </div>
-            <div class="permission-content">
-              <div class="permission-item">
-                <p class="permission-title">正在连接云端服务...</p>
-                <p class="permission-desc">需第3方连接！</p>
-                <p class="permission-extra">正在等待检测结果...</p>
-              </div>
-            </div>
-          </div>
-        </el-card>
-      </div>
-
-      <!-- 右侧：应用合规评估 + 行为列表 -->
-      <div class="right-panel">
-        <!-- 应用合规评估 -->
-        <el-card class="panel-card assessment-card">
-          <div slot="header" class="card-header">
-            <i class="el-icon-s-data"></i>
+        <!-- 应用合规评估区 -->
+        <div class="function-area">
+          <div class="area-title">
+            <i class="el-icon-s-marketing"></i>
             <span>应用合规评估</span>
           </div>
-          <div class="assessment-content">
-            <div class="assessment-item">
-              <i class="el-icon-warning-outline"></i>
-              <span>工信部抽查合规(2020) 164号检测</span>
+          <div class="assessment-text">
+            工信部抽查合规(2020) 164号合规检测
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 橙色提示区域 - 只在自动采集模式下显示 -->
+    <div v-if="collectMode === 'auto' && !activeTab" class="warning-banner">
+      <span class="warning-label">任务状态：</span>
+      <div class="warning-text-wrapper">
+        <i class="el-icon-bell"></i>
+        <div class="scrolling-text">
+          <span class="warning-text">自动采集任务进行中，无法启动手机，请于20-30分钟后，请等待合个子任务完成</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部内容区域 -->
+    <div class="content-wrapper">
+      <!-- 自动采集模式：显示三列布局 -->
+      <template v-if="collectMode === 'auto' && !activeTab">
+        <!-- 左侧：手机信息和预览 -->
+        <div class="left-column">
+          <div class="phone-info-box">
+            <div class="info-item">
+              <i class="el-icon-mobile-phone" style="color: #409EFF;"></i>
+              <span class="info-label">当前手机编号：</span>
+              <span class="info-value">HT7C61ACC841</span>
             </div>
           </div>
-        </el-card>
-
-        <!-- 行为列表 -->
-        <el-card class="panel-card behavior-card">
-          <div slot="header" class="card-header-tabs">
-            <el-radio-group v-model="behaviorTab" size="small">
-              <el-radio-button label="download">下载行为</el-radio-button>
-              <el-radio-button label="action">行为内容</el-radio-button>
-              <el-radio-button label="other">其他日期</el-radio-button>
-              <el-radio-button label="screenshot">截屏日期</el-radio-button>
-              <el-radio-button label="log">检查日期</el-radio-button>
-            </el-radio-group>
+          <div class="phone-preview">
+            <iframe
+              src="http://192.168.216.146:6080/vnc_lite.html?scale=true"
+              frameborder="0"
+              class="vnc-iframe"
+            ></iframe>
           </div>
+        </div>
 
-          <!-- 行为数据表格 -->
+        <!-- 中间：实时数据区域 -->
+        <div class="middle-column">
+          <div class="realtime-box">
+            <div class="realtime-header">
+              <i class="el-icon-loading"></i>
+              <span>实时数据</span>
+            </div>
+            <div class="realtime-content">
+              <p>正在连接服务器...</p>
+              <p>服务器已连接！</p>
+              <p>正在等待数据传输...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：行为数据表格 -->
+        <div class="right-column">
+          <div class="behavior-header">
+            <el-button
+              type="primary"
+              size="mini"
+            >
+              下载行为数据
+            </el-button>
+            <span class="behavior-label">行为内容</span>
+          </div>
           <el-table
             :data="behaviorList"
-            height="500"
+            height="450"
             size="small"
-            :header-cell-style="{background: '#f5f7fa', color: '#606266'}"
+            :header-cell-style="{background: '#f5f7fa', color: '#606266', fontSize: '13px'}"
+            :cell-style="{fontSize: '12px'}"
           >
-            <el-table-column label="时间" width="180">
+            <el-table-column label="时间" width="140">
               <template slot-scope="scope">
-                <div class="time-cell">
-                  <div>{{ scope.row.date }}</div>
-                  <div class="time-detail">{{ scope.row.time }}</div>
-                </div>
+                <div>{{ scope.row.date }}</div>
+                <div style="color: #909399; font-size: 11px;">{{ scope.row.time }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="行为" prop="action" width="120" />
-            <el-table-column label="个人信息" width="80">
+            <el-table-column label="行为" prop="action" width="100" />
+            <el-table-column label="个人信息" width="80" align="center">
               <template slot-scope="scope">
-                <el-tag type="info" size="mini">{{ scope.row.personalInfo }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="检测状态">
-              <template slot-scope="scope">
-                <div class="status-cell">
-                  <span>{{ scope.row.status }}</span>
-                </div>
+                <span>{{ scope.row.personalInfo }}</span>
               </template>
             </el-table-column>
           </el-table>
-        </el-card>
+        </div>
+      </template>
+
+      <!-- 基本信息 -->
+      <div v-else-if="activeTab === 'basic'" class="info-panel">
+        <div class="info-title">基本信息</div>
+        <div class="info-content">
+          <div class="info-row">
+            <span class="info-label">软件名称</span>
+            <span class="info-value">口语轻松学</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">包名</span>
+            <span class="info-value">com.couyuxue</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">类型</span>
+            <span class="info-value">学习</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">软件大小</span>
+            <span class="info-value">130.29MB</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">软件版本</span>
+            <span class="info-value">1.3.4</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">安装包文件名</span>
+            <span class="info-value">com.couyuxue_1.3.4.apk</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">安装包MD5</span>
+            <span class="info-value">c638sd283dcd93bjkkc</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">安装包SHA-1</span>
+            <span class="info-value">c638sd283dcd93bjkkc</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">安装包SHA-256</span>
+            <span class="info-value">c638sd283dcd93bjkkc</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">签名信息</span>
+            <span class="info-value">c638sd283dcd93bjkkc</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">证书MD5</span>
+            <span class="info-value">c638sd283dcd93bjkkc</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">targetSdkVersion</span>
+            <span class="info-value">30</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SDK信息 -->
+      <div v-else-if="activeTab === 'sdk'" class="sdk-panel">
+        <div class="sdk-search">
+          <el-input
+            v-model="sdkSearchText"
+            placeholder="请输入搜索内容"
+            style="width: 300px;"
+          ></el-input>
+          <el-button style="margin-left: 10px;">重置</el-button>
+          <el-button type="primary" style="margin-left: 10px;">查询</el-button>
+        </div>
+        <el-table
+          :data="sdkList"
+          border
+          style="width: 100%; margin-top: 20px;"
+          :header-cell-style="{background: '#f5f7fa', color: '#606266'}"
+        >
+          <el-table-column prop="name" label="SDK名称" width="180"></el-table-column>
+          <el-table-column prop="packageName" label="包名" width="180"></el-table-column>
+          <el-table-column prop="developer" label="开发者" width="150"></el-table-column>
+          <el-table-column prop="type" label="类别" width="120"></el-table-column>
+          <el-table-column prop="description" label="描述" min-width="200"></el-table-column>
+          <el-table-column prop="location" label="地址" width="150"></el-table-column>
+        </el-table>
+        <el-pagination
+          @size-change="handleSdkSizeChange"
+          @current-change="handleSdkPageChange"
+          :current-page="sdkPagination.currentPage"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="sdkPagination.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="sdkPagination.total"
+          style="margin-top: 20px; text-align: right;"
+        >
+        </el-pagination>
+      </div>
+
+      <!-- 权限分析 -->
+      <div v-else-if="activeTab === 'permission'" class="permission-panel">
+        <div class="permission-title">声明权限</div>
+        <div class="permission-filters">
+          <el-select v-model="permissionFilters.name" placeholder="请选择权限名称" size="small" clearable style="width: 200px; margin-right: 10px;">
+            <el-option
+              v-for="item in permissionNameOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select v-model="permissionFilters.meaning" placeholder="请选择权限含义" size="small" clearable style="width: 200px; margin-right: 10px;">
+            <el-option
+              v-for="item in permissionMeaningOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select v-model="permissionFilters.protectionLevel" placeholder="请选择保护级别" size="small" clearable style="width: 150px; margin-right: 10px;">
+            <el-option
+              v-for="item in protectionLevelOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-button size="small" @click="resetPermissionFilters">重置</el-button>
+          <el-button type="primary" size="small" @click="searchPermissions">查询</el-button>
+        </div>
+        <el-table
+          :data="permissionList"
+          border
+          style="width: 100%; margin-top: 20px;"
+          :header-cell-style="{background: '#f5f7fa', color: '#606266'}"
+        >
+          <el-table-column prop="index" label="序号" width="80"></el-table-column>
+          <el-table-column prop="name" label="权限名称" width="200"></el-table-column>
+          <el-table-column prop="meaning" label="权限含义" width="150"></el-table-column>
+          <el-table-column prop="type" label="权限类型" width="120"></el-table-column>
+          <el-table-column prop="protectionLevel" label="保护级别" width="120"></el-table-column>
+          <el-table-column prop="collectPersonalInfo" label="可收集个人信息权限" width="150"></el-table-column>
+          <el-table-column prop="isUsed" label="是否使用" width="100"></el-table-column>
+          <el-table-column prop="sensitivePermission" label="敏感权限" width="100"></el-table-column>
+          <el-table-column prop="notRecommendApply" label="不建议申请权限" width="130"></el-table-column>
+          <el-table-column prop="minRequiredPermission" label="最小必要权限" width="130"></el-table-column>
+        </el-table>
+        <el-pagination
+          @size-change="handlePermissionSizeChange"
+          @current-change="handlePermissionPageChange"
+          :current-page="permissionPagination.currentPage"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="permissionPagination.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="permissionPagination.total"
+          style="margin-top: 20px; text-align: right;"
+        >
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -179,70 +325,104 @@
 <script>
 export default {
   name: 'TaskDetail',
+  mounted() {
+    // 启动任务播报循环
+    this.startTaskBroadcast()
+  },
+  beforeDestroy() {
+    // 清理定时器
+    if (this.broadcastTimer) {
+      clearInterval(this.broadcastTimer)
+    }
+  },
   data() {
     return {
-      // 应用信息
-      appInfo: {
-        name: '小方出行',
-        icon: 'https://via.placeholder.com/50/FF8C00/FFFFFF?text=小方',
-        version: '6.4.1'
-      },
-      // 采集模式
       collectMode: 'auto',
-      // 活动标签页
-      activeTab: 'permission',
-      // 行为标签页
+      activeTab: '',
       behaviorTab: 'download',
-      // 行为列表数据
+      sdkSearchText: '',
+      sdkPagination: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      },
+      permissionPagination: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      },
+      sdkList: [],
+      permissionList: [],
+      permissionFilters: {
+        name: '',
+        meaning: '',
+        protectionLevel: ''
+      },
+      permissionNameOptions: [
+        { value: 'CAMERA', label: '相机权限' },
+        { value: 'LOCATION', label: '位置权限' },
+        { value: 'CONTACTS', label: '通讯录权限' },
+        { value: 'PHONE', label: '电话权限' },
+        { value: 'SMS', label: '短信权限' },
+        { value: 'STORAGE', label: '存储权限' }
+      ],
+      permissionMeaningOptions: [
+        { value: 'camera_access', label: '访问相机' },
+        { value: 'location_access', label: '获取位置信息' },
+        { value: 'contacts_access', label: '访问通讯录' },
+        { value: 'phone_access', label: '拨打电话' },
+        { value: 'sms_access', label: '发送短信' },
+        { value: 'storage_access', label: '访问存储' }
+      ],
+      protectionLevelOptions: [
+        { value: 'normal', label: '普通' },
+        { value: 'dangerous', label: '危险' },
+        { value: 'signature', label: '签名' },
+        { value: 'system', label: '系统' }
+      ],
+      analysisTabs: [
+        { label: '基本信息', value: 'basic' },
+        { label: 'SDK信息', value: 'sdk' },
+        { label: '权限分析', value: 'permission' },
+        { label: '行为分析', value: 'behavior' }
+      ],
+      taskBroadcasts: [
+        '合规评估（进行中）',
+        '基本信息（进行中）',
+        '人工采集（待人工）',
+        '深度（进行中）'
+      ],
+      currentTaskIndex: 0,
       behaviorList: [
         {
-          date: '2025-04-22 11:0',
-          time: '9:58.322',
-          action: '停止收听',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
+          date: '2025-11-15',
+          time: '14.15:03',
+          action: '应用启动',
+          personalInfo: '否'
         },
         {
-          date: '2025-04-22 11:0',
-          time: '9:57.161',
-          action: '注册流盘广播',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
+          date: '2025-11-15',
+          time: '14.15:18',
+          action: '启动应用',
+          personalInfo: '否'
         },
         {
-          date: '2025-04-22 11:0',
-          time: '9:56.884',
-          action: '注册流盘广播',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
+          date: '2025-11-15',
+          time: '14.15:18',
+          action: '同意隐私',
+          personalInfo: '否'
         },
         {
-          date: '2025-04-22 11:0',
-          time: '9:56.270',
-          action: '注册流盘广播',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
+          date: '2025-11-15',
+          time: '14.15:18',
+          action: '同意隐私',
+          personalInfo: '否'
         },
         {
-          date: '2025-04-22 11:0',
-          time: '9:56.004',
-          action: '注册流盘广播',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
-        },
-        {
-          date: '2025-04-22 11:0',
-          time: '9:54.522',
-          action: '注册流盘广播',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
-        },
-        {
-          date: '2025-04-22 11:0',
-          time: '9:53.511',
-          action: '注册流盘广播',
-          personalInfo: '否',
-          status: '隐私政策问题自检列表'
+          date: '2025-11-15',
+          time: '14.15:18',
+          action: '功能通历',
+          personalInfo: '是'
         }
       ]
     }
@@ -251,20 +431,23 @@ export default {
     this.loadTaskDetail()
   },
   methods: {
-    // 加载任务详情
     loadTaskDetail() {
       // TODO: 从API获取任务详情数据
       const taskId = this.$route.params.id
       console.log('加载任务详情:', taskId)
     },
 
-    // 上传新版本
-    handleUploadNewVersion() {
-      this.$message.info('跳转到上传新版本页面...')
-      // this.$router.push('/app/task/upload')
+    startTaskBroadcast() {
+      // 每2秒切换一次任务播报
+      this.broadcastTimer = setInterval(() => {
+        this.currentTaskIndex = (this.currentTaskIndex + 1) % this.taskBroadcasts.length
+      }, 2000)
     },
 
-    // 停止任务
+    handleCompare() {
+      this.$message.info('跳转到应用对比页面...')
+    },
+
     handleStopTask() {
       this.$confirm('确认停止该检测任务吗？', '提示', {
         confirmButtonText: '确定',
@@ -296,6 +479,60 @@ export default {
           }).catch(() => {})
           break
       }
+    },
+
+    handleSdkSizeChange(val) {
+      this.sdkPagination.pageSize = val
+      this.loadSdkList()
+    },
+
+    handleSdkPageChange(val) {
+      this.sdkPagination.currentPage = val
+      this.loadSdkList()
+    },
+
+    loadSdkList() {
+      // TODO: 从API获取SDK列表数据
+      console.log('加载SDK列表')
+    },
+
+    handlePermissionSizeChange(val) {
+      this.permissionPagination.pageSize = val
+      this.loadPermissionList()
+    },
+
+    handlePermissionPageChange(val) {
+      this.permissionPagination.currentPage = val
+      this.loadPermissionList()
+    },
+
+    loadPermissionList() {
+      // TODO: 从API获取权限列表数据
+      console.log('加载权限列表')
+    },
+
+    resetPermissionFilters() {
+      this.permissionFilters = {
+        name: '',
+        meaning: '',
+        protectionLevel: ''
+      }
+      this.loadPermissionList()
+    },
+
+    searchPermissions() {
+      console.log('搜索权限:', this.permissionFilters)
+      this.loadPermissionList()
+    },
+
+    handleCollectModeChange(mode) {
+      this.collectMode = mode
+      this.activeTab = '' // 清空分析标签
+    },
+
+    handleTabChange(tab) {
+      this.activeTab = tab
+      this.collectMode = '' // 清空采集模式
     }
   }
 }
@@ -303,274 +540,387 @@ export default {
 
 <style lang="scss" scoped>
 .task-detail-container {
-  background: #f0f2f5;
-  min-height: calc(100vh - 84px);
+  background: #fff;
+  padding: 20px;
 
-  // 顶部应用信息栏
-  .app-header {
-    background: #fff;
-    padding: 15px 20px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
-    .app-info-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-
-      .app-logo {
-        width: 50px;
-        height: 50px;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .app-name {
-        font-size: 20px;
-        font-weight: bold;
-        color: #303133;
-      }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      .el-dropdown-link {
-        cursor: pointer;
-        font-size: 20px;
-        color: #606266;
-        padding: 0 10px;
-
-        &:hover {
-          color: #409EFF;
-        }
-      }
-    }
-  }
-
-  // 主要内容区域
-  .content-wrapper {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-
-    // 左侧面板
-    .left-panel {
-      width: 280px;
-      flex-shrink: 0;
-    }
-
-    // 中间面板
-    .middle-panel {
-      flex: 1;
-      min-width: 0;
-    }
-
-    // 右侧面板
-    .right-panel {
-      width: 400px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-  }
-
-  // 卡片样式
-  .panel-card {
-    margin-bottom: 0;
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: bold;
-      font-size: 15px;
-
-      i {
-        color: #409EFF;
-        font-size: 16px;
-      }
-    }
-
-    .card-header-tabs {
-      ::v-deep .el-radio-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-
-        .el-radio-button__inner {
-          padding: 8px 12px;
-          font-size: 12px;
-        }
-      }
-    }
-  }
-
-  // 采集选项
-  .collect-options {
-    display: flex;
-    gap: 10px;
+  // 顶部区域
+  .top-section {
+    padding: 15px;
     margin-bottom: 15px;
 
-    .el-button {
-      flex: 1;
-    }
-  }
-
-  .collect-status {
-    margin-bottom: 20px;
-  }
-
-  // 手机预览区域
-  .phone-preview {
-    .preview-placeholder {
-      background: #f5f7fa;
-      border: 2px dashed #dcdfe6;
-      border-radius: 8px;
-      padding: 60px 20px;
-      text-align: center;
-      color: #909399;
-
-      i {
-        font-size: 48px;
-        margin-bottom: 10px;
-      }
-
-      p {
-        margin: 0;
-        font-size: 14px;
-      }
-    }
-  }
-
-  // 分析标签页
-  .analysis-tabs {
-    margin-bottom: 20px;
-
-    ::v-deep .el-tabs__header {
-      margin-bottom: 20px;
-    }
-  }
-
-  // 线索区域
-  .clue-section {
-    background: #fff9e6;
-    border-left: 4px solid #E6A23C;
-    padding: 15px;
-    margin-bottom: 20px;
-
-    .clue-header {
+    // 第一行
+    .header-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
 
-      i {
-        color: #E6A23C;
-        font-size: 18px;
-      }
+      .app-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
 
-      span {
-        font-weight: bold;
-        color: #303133;
-      }
-    }
-
-    .clue-tip {
-      color: #606266;
-      font-size: 14px;
-    }
-  }
-
-  // 权限详情
-  .permission-detail {
-    .permission-header {
-      background: #409EFF;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 4px 4px 0 0;
-      font-weight: bold;
-    }
-
-    .permission-content {
-      background: #ecf5ff;
-      padding: 20px;
-      border-radius: 0 0 4px 4px;
-
-      .permission-item {
-        p {
-          margin: 0 0 10px 0;
+        .app-label {
+          font-size: 16px;
+          font-weight: bold;
           color: #303133;
-          line-height: 1.6;
+        }
+      }
 
-          &.permission-title {
-            font-weight: bold;
+      .header-actions {
+        display: flex;
+        gap: 10px;
+      }
+    }
+
+    // 第二行：三个功能区域
+    .function-areas {
+      display: flex;
+      gap: 20px;
+
+      .function-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .area-title {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-weight: bold;
+          font-size: 14px;
+          color: #303133;
+
+          i {
             color: #409EFF;
+            font-size: 18px;
           }
+        }
 
-          &.permission-desc {
-            color: #E6A23C;
-          }
+        .area-buttons {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
 
-          &:last-child {
-            margin-bottom: 0;
+        .task-broadcast {
+          margin-top: 10px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+
+          .broadcast-text {
+            font-size: 12px;
+            color: #409EFF;
+            text-align: center;
           }
+        }
+
+        .slide-up-enter-active,
+        .slide-up-leave-active {
+          transition: all 0.3s ease;
+        }
+
+        .slide-up-enter {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+
+        .slide-up-leave-to {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+
+        .assessment-text {
+          padding: 10px;
+          background: transparent;
+          border: 1px solid #dcdfe6;
+          border-radius: 4px;
+          font-size: 13px;
+          color: #606266;
+          line-height: 1.6;
+          text-align: center;
+          max-width: 280px;
+          margin: 0 auto;
         }
       }
     }
   }
 
-  // 应用合规评估
-  .assessment-card {
-    .assessment-content {
-      .assessment-item {
+  // 橙色提示区域
+  .warning-banner {
+    background: #f5f7fa;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    overflow: hidden;
+    position: relative;
+
+    .warning-label {
+      font-weight: bold;
+      color: #303133;
+      flex-shrink: 0;
+    }
+
+    .warning-text-wrapper {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      max-width: 60%;
+
+      > i {
+        color: #ff9800;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .scrolling-text {
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+
+        .warning-text {
+          display: inline-block;
+          color: #ff9800;
+          animation: scroll-left 15s linear infinite;
+          padding-left: 100%;
+        }
+      }
+    }
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  // 底部三列内容区域
+  .content-wrapper {
+    display: flex;
+    gap: 15px;
+    align-items: stretch;
+    min-height: calc(100vh - 400px);
+
+    // 左列 (40%)
+    .left-column {
+      flex: 4;
+      min-width: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+
+      .phone-info-box {
+        margin-bottom: 15px;
+        flex-shrink: 0;
+
+        .info-item {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 13px;
+
+          .info-label {
+            color: #606266;
+          }
+
+          .info-value {
+            color: #303133;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .phone-preview {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 0;
+        overflow: hidden;
+        background: transparent;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+
+        .vnc-iframe {
+          width: 100%;
+          height: 100%;
+          min-height: 600px;
+          border: none;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+      }
+    }
+
+    // 中列 (40%)
+    .middle-column {
+      flex: 4;
+      min-width: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+
+      .realtime-box {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .realtime-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 15px;
+          background: #409EFF;
+          color: #fff;
+          border-radius: 4px;
+          margin-bottom: 15px;
+          font-weight: bold;
+          flex-shrink: 0;
+
+          i {
+            font-size: 16px;
+          }
+        }
+
+        .realtime-content {
+          background: #ecf5ff;
+          padding: 20px;
+          border-radius: 4px;
+          font-size: 14px;
+          line-height: 2;
+          flex: 1;
+          overflow-y: auto;
+
+          p {
+            margin: 0 0 10px 0;
+            color: #303133;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+
+    // 右列 (20%)
+    .right-column {
+      flex: 2;
+      min-width: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+
+      .behavior-header {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 15px;
-        background: #fff9e6;
-        border-radius: 4px;
-        border-left: 4px solid #E6A23C;
+        margin-bottom: 15px;
+        flex-shrink: 0;
 
-        i {
-          color: #E6A23C;
-          font-size: 20px;
-        }
-
-        span {
-          color: #606266;
-          font-size: 14px;
-        }
-      }
-    }
-  }
-
-  // 行为卡片
-  .behavior-card {
-    flex: 1;
-
-    ::v-deep .el-card__body {
-      padding: 0;
-    }
-
-    .el-table {
-      .time-cell {
-        .time-detail {
-          color: #909399;
+        .behavior-label {
+          padding: 5px 12px;
+          background: #f5f7fa;
+          border-radius: 3px;
           font-size: 12px;
-          margin-top: 4px;
+          color: #606266;
         }
       }
 
-      .status-cell {
-        color: #606266;
-        font-size: 13px;
+      .el-table {
+        border: 1px solid #e0e0e0;
+        flex: 1;
+      }
+    }
+
+    // 基本信息面板
+    .info-panel {
+      width: 100%;
+      padding: 20px;
+      border-radius: 4px;
+
+      .info-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #303133;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+      }
+
+      .info-content {
+        .info-row {
+          display: flex;
+          padding: 12px 0;
+          border-bottom: 1px solid #f0f0f0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .info-label {
+            width: 200px;
+            color: #606266;
+            font-size: 14px;
+            flex-shrink: 0;
+          }
+
+          .info-value {
+            flex: 1;
+            color: #303133;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    // SDK信息面板
+    .sdk-panel {
+      width: 100%;
+      padding: 20px;
+      border-radius: 4px;
+
+      .sdk-search {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    // 权限分析面板
+    .permission-panel {
+      width: 100%;
+      padding: 20px;
+      border-radius: 4px;
+
+      .permission-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #303133;
+        margin-bottom: 15px;
+      }
+
+      .permission-filters {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
       }
     }
   }
@@ -582,24 +932,9 @@ export default {
     .content-wrapper {
       flex-direction: column;
 
-      .left-panel,
-      .right-panel {
+      .left-column,
+      .right-column {
         width: 100%;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .task-detail-container {
-    .app-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
-
-      .header-actions {
-        width: 100%;
-        justify-content: flex-end;
       }
     }
   }
