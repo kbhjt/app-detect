@@ -161,6 +161,25 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
+  },
+  {
+    path: '/app/task',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'new',
+        component: () => import('@/views/app/task/new/index'),
+        name: 'NewTask',
+        meta: { title: '新建任务', icon: 'edit' }
+      },
+      {
+        path: 'dynamic',
+        component: () => import('@/views/app/task/dynamic/index'),
+        name: 'DynamicAnalysis',
+        meta: { title: '动态分析', icon: 'monitor' }
+      }
+    ]
   }
 ]
 

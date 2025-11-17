@@ -175,6 +175,7 @@
 
 <script>
 import { getToken } from '@/utils/auth'
+import { submitTask } from '@/api/app/task'
 
 export default {
   name: 'NewTask',
@@ -186,6 +187,8 @@ export default {
       selectAll: false,
       // 提交加载状态
       submitLoading: false,
+      // 已上传文件的路径信息
+      uploadedFiles: [],
       // 表单数据
       taskForm: {
         taskName: '',
@@ -195,7 +198,7 @@ export default {
         securityCheck: true,
         complianceTemplate: '',
         reportStyle: 'default',
-        reportContent: ['basic_info', 'sdk_info', 'permission', 'behavior'],
+        reportContent: ['base_info', 'sdk_info', 'permission', 'behavior'],
         complianceOption: 'all'
       },
       // 表单验证规则
@@ -245,7 +248,7 @@ export default {
         return false
       }
       if (!isLt300M) {
-        this.$message.error('上传文件大小不能超过 100MB！')
+        this.$message.error('上传文件大小不能超过 300MB！')
         return false
       }
       return true
@@ -253,22 +256,76 @@ export default {
 
     // 文件上传成功
     handleUploadSuccess(response, file, fileList) {
-      this.$message.success('文件上传成功！')
+      console.log('上传成功，响应数据:', response)
+      console.log('文件信息:', file)
+
+      // 检查响应格式并保存文件信息
+      let fileInfo = {
+        uid: file.uid,
+        name: file.name,
+        fileName: '',
+        filePath: '',
+        fileSize: file.size,
+        url: ''
+      }
+
+      // 根据不同的响应格式提取数据
+      if (response && response.code === 200 && response.data) {
+        // 后端正常响应
+        fileInfo.fileName = response.data.fileName || ''
+        fileInfo.filePath = response.data.filePath || ''
+        fileInfo.fileSize = response.data.fileSize || file.size
+        fileInfo.url = response.data.url || ''
+        fileInfo.name = response.data.originalFilename || file.name
+
+        this.$message.success('文件上传成功！')
+      } else if (response && response.fileName) {
+        // 兼容其他格式
+        fileInfo.fileName = response.fileName
+        fileInfo.filePath = response.filePath || ''
+        fileInfo.url = response.url || ''
+
+        this.$message.success('文件上传成功！')
+      } else {
+        // 即使响应格式不对，也记录文件（用于离线测试）
+        // 使用模拟路径
+        fileInfo.filePath = `/opt/apk/${file.name}`
+        fileInfo.fileName = `/opt/apk/${file.name}`
+
+        console.warn('响应格式异常，使用模拟路径:', fileInfo)
+        this.$message.warning('文件已添加（后端服务未连接，使用模拟路径）')
+      }
+
+      // 添加到已上传文件列表
+      this.uploadedFiles.push(fileInfo)
+
+      // 更新文件列表
       this.fileList = fileList.map((item, index) => ({
         ...item,
         selected: false,
-        uid: item.uid || index
+        uid: item.uid || index,
+        response: item.response || response
       }))
+
+      console.log('已上传文件列表:', this.uploadedFiles)
+      console.log('当前文件列表:', this.fileList)
     },
 
     // 文件上传失败
     handleUploadError(err, file, fileList) {
-      this.$message.error('文件上传失败：' + err.message)
+      console.error('文件上传失败:', err)
+      this.$message.error('文件上传失败：' + (err.message || '服务器连接失败'))
     },
 
     // 移除文件
     handleRemove(file, fileList) {
       this.fileList = fileList
+      // 同时从已上传文件列表中移除
+      const index = this.uploadedFiles.findIndex(f => f.uid === file.uid)
+      if (index > -1) {
+        this.uploadedFiles.splice(index, 1)
+      }
+      console.log('移除文件后，已上传文件列表:', this.uploadedFiles)
     },
 
     // 文件超出限制
@@ -308,8 +365,17 @@ export default {
         }
 
         // 验证是否上传了文件
+        console.log('提交时检查 - fileList:', this.fileList)
+        console.log('提交时检查 - uploadedFiles:', this.uploadedFiles)
+
         if (this.fileList.length === 0) {
           this.$message.warning('请先上传应用文件')
+          return
+        }
+
+        // 如果 uploadedFiles 为空，但 fileList 不为空，说明可能是上传失败但文件还在列表中
+        if (this.uploadedFiles.length === 0 && this.fileList.length > 0) {
+          this.$message.error('文件上传失败，请重新上传或检查后端服务是否启动')
           return
         }
 
@@ -320,30 +386,37 @@ export default {
         }).then(() => {
           this.submitLoading = true
 
-          // 构造提交数据
+          // 构造提交数据，包含文件路径信息
           const submitData = {
             ...this.taskForm,
-            fileList: this.fileList.map(f => f.response?.data || f.name)
+            // 传递文件路径数组（用于后续安装APK）
+            filePaths: this.uploadedFiles.map(f => f.filePath),
+            fileNames: this.uploadedFiles.map(f => f.fileName),
+            originalFilenames: this.uploadedFiles.map(f => f.name)
           }
 
           console.log('提交数据:', submitData)
 
-          // 模拟提交
-          setTimeout(() => {
-            this.submitLoading = false
+          // 调用API提交任务
+          submitTask(submitData).then(response => {
             this.$message.success('检测任务提交成功！')
 
-            // 跳转到任务列表
-            this.$router.push('/app/task/list')
-          }, 1500)
-
-          // TODO: 实际应该调用API提交
-          // submitTask(submitData).then(response => {
-          //   this.$message.success('检测任务提交成功！')
-          //   this.$router.push('/app/task/list')
-          // }).finally(() => {
-          //   this.submitLoading = false
-          // })
+            // 跳转到动态分析页面，携带必要参数
+            this.$router.push({
+              path: '/task/task/dynamic',
+              query: {
+                taskId: response.data?.taskId || Date.now(), // 任务ID
+                apkPath: this.uploadedFiles[0].filePath, // 第一个APK的路径
+                taskName: this.taskForm.taskName,
+                filePaths: JSON.stringify(this.uploadedFiles.map(f => f.filePath)) // 所有文件路径
+              }
+            })
+          }).catch(error => {
+            console.error('任务提交失败:', error)
+            this.$message.error(error.msg || '任务提交失败，请检查后端服务是否启动')
+          }).finally(() => {
+            this.submitLoading = false
+          })
         }).catch(() => {
           this.$message.info('已取消提交')
         })
@@ -354,6 +427,7 @@ export default {
     handleReset() {
       this.$refs.taskForm.resetFields()
       this.fileList = []
+      this.uploadedFiles = []
       this.selectAll = false
     },
 
@@ -566,4 +640,3 @@ export default {
   }
 }
 </style>
-
